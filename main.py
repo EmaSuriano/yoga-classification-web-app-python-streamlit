@@ -1,8 +1,9 @@
 import streamlit as st
-from keras.models import load_model
+from tensorflow.keras.models import load_model
 from PIL import Image
-import numpy as np
+import json
 from util import classify
+import pandas as pd
 
 # set title
 st.title("Yoga classification")
@@ -10,16 +11,31 @@ st.title("Yoga classification")
 # set header
 st.header("Please upload a yoga position image")
 
-# upload file
-file = st.file_uploader("", type=["jpeg", "jpg", "png"])
+with open("./model/Poses.json", "r", encoding="utf-8") as file:
+    data = json.load(file)
+    df = pd.DataFrame(data["Poses"])
+
+with st.expander("See trained proses"):
+    st.data_editor(
+        df,
+        column_config={
+            "sanskrit_name": "Sankrit name",
+            "english_name": "English name",
+            "img_url": st.column_config.ImageColumn("Pose Image"),
+        },
+        hide_index=True,
+    )
+
+
+class_names = df.apply(
+    lambda row: f"{row['sanskrit_name']} / {row['english_name']}",
+    axis=1,
+).tolist()
+
+file = st.file_uploader("Choose an image file", type=["jpeg", "jpg", "png"])
 
 # load classifier
-model = load_model("./model/pneumonia_classifier.h5")
-
-# load class names
-with open("./model/labels.txt", "r") as f:
-    class_names = [a[:-1].split(" ")[1] for a in f.readlines()]
-    f.close()
+model = load_model("./model/vgg16-ft.h5")
 
 # display image
 if file is not None:
