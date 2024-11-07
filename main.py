@@ -6,28 +6,28 @@ import numpy as np
 from util import classify, set_background
 
 
-set_background('./bgs/bg5.png')
+set_background("./bgs/bg.png")
 
 # set title
-st.title('Pneumonia classification')
+st.title("Yoga classification")
 
 # set header
-st.header('Please upload a chest X-ray image')
+st.header("Please upload a yoga position image")
 
 # upload file
-file = st.file_uploader('', type=['jpeg', 'jpg', 'png'])
+file = st.file_uploader("", type=["jpeg", "jpg", "png"])
 
 # load classifier
-model = load_model('./model/pneumonia_classifier.h5')
+model = load_model("./model/pneumonia_classifier.h5")
 
 # load class names
-with open('./model/labels.txt', 'r') as f:
-    class_names = [a[:-1].split(' ')[1] for a in f.readlines()]
+with open("./model/labels.txt", "r") as f:
+    class_names = [a[:-1].split(" ")[1] for a in f.readlines()]
     f.close()
 
 # display image
 if file is not None:
-    image = Image.open(file).convert('RGB')
+    image = Image.open(file).convert("RGB")
     st.image(image, use_column_width=True)
 
     # classify image
